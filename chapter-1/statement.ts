@@ -1,4 +1,4 @@
-import type { Invoice, Play, Plays } from "./types";
+import type { Invoice, Performance, Play, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
@@ -34,29 +34,29 @@ export function statement(invoice: Invoice, plays: Plays) {
 
   return result;
 
-  function getAmountFor(perf: Invoice["performances"][number], play: Play) {
-    let thisAmount = 0;
+  function getAmountFor(performance: Performance, play: Play) {
+    let result = 0;
 
     switch (play.type) {
       case "tragedy":
-        thisAmount = 40_000;
-        if (perf.audience > 30) {
-          thisAmount += 1_000 * (perf.audience - 30);
+        result = 40_000;
+        if (performance.audience > 30) {
+          result += 1_000 * (performance.audience - 30);
         }
         break;
 
       case "comedy":
-        thisAmount = 30_000;
-        if (perf.audience > 20) {
-          thisAmount += 10_000 + 500 * (perf.audience - 20);
+        result = 30_000;
+        if (performance.audience > 20) {
+          result += 10_000 + 500 * (performance.audience - 20);
         }
-        thisAmount += 300 * perf.audience;
+        result += 300 * performance.audience;
         break;
 
       default:
         throw new Error(`unknown type: ${play.type}`);
     }
 
-    return thisAmount;
+    return result;
   }
 }
