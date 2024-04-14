@@ -7,7 +7,8 @@ export function statement(invoice: Invoice, plays: Plays) {
 
   for (let perf of invoice.performances) {
     volumeCredits += getVolumeCreditsFor(perf);
-
+  }
+  for (let perf of invoice.performances) {
     // print line for this order
     result += `${getPlayFor(perf).name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
 
