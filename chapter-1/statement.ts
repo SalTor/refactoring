@@ -26,13 +26,13 @@ export function statement(invoice: Invoice, plays: Plays) {
   return result;
 
   function getVolumeCreditsFor(performance: Performance) {
-    let volumeCredits = Math.max(performance.audience - 30, 0);
+    let result = Math.max(performance.audience - 30, 0);
 
     if ("comedy" === getPlayFor(performance).type) {
-      volumeCredits += Math.floor(performance.audience / 5);
+      result += Math.floor(performance.audience / 5);
     }
 
-    return volumeCredits;
+    return result;
   }
 
   function getAmountFor(performance: Performance) {
