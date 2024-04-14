@@ -1,4 +1,4 @@
-import type { Invoice, Plays } from "./types";
+import type { Invoice, Play, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
@@ -13,6 +13,28 @@ export function statement(invoice: Invoice, plays: Plays) {
 
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
+    let thisAmount = getAmountFor(perf, play);
+
+    // add volume credits
+    volumeCredits += Math.max(perf.audience - 30, 0);
+
+    // add extra credit for every ten comedy attendees
+    if ("comedy" === play.type) {
+      volumeCredits += Math.floor(perf.audience / 5);
+    }
+
+    // print line for this order
+    result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+
+    totalAmount += thisAmount;
+  }
+
+  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `You earned ${volumeCredits} credits\n`;
+
+  return result;
+
+  function getAmountFor(perf: Invoice["performances"][number], play: Play) {
     let thisAmount = 0;
 
     switch (play.type) {
@@ -35,22 +57,6 @@ export function statement(invoice: Invoice, plays: Plays) {
         throw new Error(`unknown type: ${play.type}`);
     }
 
-    // add volume credits
-    volumeCredits += Math.max(perf.audience - 30, 0);
-
-    // add extra credit for every ten comedy attendees
-    if ("comedy" === play.type) {
-      volumeCredits += Math.floor(perf.audience / 5);
-    }
-
-    // print line for this order
-    result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
-
-    totalAmount += thisAmount;
+    return thisAmount;
   }
-
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
-
-  return result;
 }
