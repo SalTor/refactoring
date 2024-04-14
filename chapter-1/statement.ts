@@ -3,8 +3,6 @@ import type { Invoice, Performance, Plays } from "./types";
 export function statement(invoice: Invoice, plays: Plays) {
   let result = `Statements for ${invoice.customer}\n`;
 
-  let volumeCredits = getTotalVolumeCredits();
-
   let totalAmount = 0;
   for (let perf of invoice.performances) {
     // print line for this order
@@ -14,7 +12,7 @@ export function statement(invoice: Invoice, plays: Plays) {
   }
 
   result += `Amount owed is ${usd(totalAmount)}\n`;
-  result += `You earned ${volumeCredits} credits\n`;
+  result += `You earned ${getTotalVolumeCredits()} credits\n`;
 
   return result;
 
