@@ -4,11 +4,13 @@ export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
   let volumeCredits = 0;
   let result = `Statements for ${invoice.customer}\n`;
+
   const format = new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
     minimumFractionDigits: 2,
   }).format;
+
   for (let perf of invoice.performances) {
     const play = plays[perf.playID];
     let thisAmount = 0;
@@ -20,6 +22,7 @@ export function statement(invoice: Invoice, plays: Plays) {
           thisAmount += 1_000 * (perf.audience - 30);
         }
         break;
+
       case "comedy":
         thisAmount = 30_000;
         if (perf.audience > 20) {
@@ -27,12 +30,14 @@ export function statement(invoice: Invoice, plays: Plays) {
         }
         thisAmount += 300 * perf.audience;
         break;
+
       default:
         throw new Error(`unknown type: ${play.type}`);
     }
 
     // add volume credits
     volumeCredits += Math.max(perf.audience - 30, 0);
+
     // add extra credit for every ten comedy attendees
     if ("comedy" === play.type) {
       volumeCredits += Math.floor(perf.audience / 5);
@@ -40,10 +45,12 @@ export function statement(invoice: Invoice, plays: Plays) {
 
     // print line for this order
     result += `${play.name}: ${format(thisAmount / 100)} (${perf.audience} seats)\n`;
+
     totalAmount += thisAmount;
   }
 
   result += `Amount owed is ${format(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
+
   return result;
 }
