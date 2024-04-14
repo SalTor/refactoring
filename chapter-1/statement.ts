@@ -1,4 +1,4 @@
-import type { Invoice, Performance, Play, Plays } from "./types";
+import type { Invoice, Performance, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
   let totalAmount = 0;
