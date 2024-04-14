@@ -5,25 +5,27 @@ export function statement(invoice: Invoice, plays: Plays) {
   let volumeCredits = 0;
   let result = `Statements for ${invoice.customer}\n`;
 
-  const format = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-  }).format;
-
   for (let perf of invoice.performances) {
     volumeCredits += getVolumeCreditsFor(perf);
 
     // print line for this order
-    result += `${getPlayFor(perf).name}: ${format(getAmountFor(perf) / 100)} (${perf.audience} seats)\n`;
+    result += `${getPlayFor(perf).name}: ${getFormat(getAmountFor(perf) / 100)} (${perf.audience} seats)\n`;
 
     totalAmount += getAmountFor(perf);
   }
 
-  result += `Amount owed is ${format(totalAmount / 100)}\n`;
+  result += `Amount owed is ${getFormat(totalAmount / 100)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
 
   return result;
+
+  function getFormat(money: number) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(money);
+  }
 
   function getVolumeCreditsFor(performance: Performance) {
     let result = Math.max(performance.audience - 30, 0);
