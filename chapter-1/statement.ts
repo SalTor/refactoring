@@ -9,22 +9,22 @@ export function statement(invoice: Invoice, plays: Plays) {
     volumeCredits += getVolumeCreditsFor(perf);
 
     // print line for this order
-    result += `${getPlayFor(perf).name}: ${getFormat(getAmountFor(perf) / 100)} (${perf.audience} seats)\n`;
+    result += `${getPlayFor(perf).name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
 
     totalAmount += getAmountFor(perf);
   }
 
-  result += `Amount owed is ${getFormat(totalAmount / 100)}\n`;
+  result += `Amount owed is ${usd(totalAmount)}\n`;
   result += `You earned ${volumeCredits} credits\n`;
 
   return result;
 
-  function getFormat(money: number) {
+  function usd(cents: number) {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: "USD",
       minimumFractionDigits: 2,
-    }).format(money);
+    }).format(cents / 100);
   }
 
   function getVolumeCreditsFor(performance: Performance) {
