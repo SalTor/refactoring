@@ -3,10 +3,7 @@ import type { Invoice, Performance, Plays } from "./types";
 export function statement(invoice: Invoice, plays: Plays) {
   let result = `Statements for ${invoice.customer}\n`;
 
-  let volumeCredits = 0;
-  for (let perf of invoice.performances) {
-    volumeCredits += getVolumeCreditsFor(perf);
-  }
+  let volumeCredits = getTotalVolumeCredits();
 
   let totalAmount = 0;
   for (let perf of invoice.performances) {
@@ -20,6 +17,14 @@ export function statement(invoice: Invoice, plays: Plays) {
   result += `You earned ${volumeCredits} credits\n`;
 
   return result;
+
+  function getTotalVolumeCredits() {
+    let volumeCredits = 0;
+    for (let perf of invoice.performances) {
+      volumeCredits += getVolumeCreditsFor(perf);
+    }
+    return volumeCredits;
+  }
 
   function usd(cents: number) {
     return new Intl.NumberFormat("en-US", {
