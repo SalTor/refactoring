@@ -12,7 +12,7 @@ export function statement(invoice: Invoice, plays: Plays) {
   }).format;
 
   for (let perf of invoice.performances) {
-    const play = plays[perf.playID];
+    const play = getPlayFor(perf);
     let thisAmount = getAmountFor(perf, play);
 
     // add volume credits
@@ -58,5 +58,9 @@ export function statement(invoice: Invoice, plays: Plays) {
     }
 
     return result;
+  }
+
+  function getPlayFor(performance: Performance) {
+    return plays[performance.playID];
   }
 }
