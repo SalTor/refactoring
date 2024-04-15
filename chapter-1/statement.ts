@@ -4,7 +4,6 @@ export function statement(invoice: Invoice, plays: Plays) {
   let result = `Statements for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
-    // print line for this order
     result += `${getPlayFor(perf).name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
   }
 
