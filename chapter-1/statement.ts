@@ -5,7 +5,7 @@ export function statement(invoice: Invoice, plays: Plays) {
     customer: invoice.customer,
     performances: invoice.performances.map(enrichPerformance),
   };
-  return renderPlaintext(statementData, plays);
+  return renderPlaintext(statementData);
 
   function getPlayFor(invoicePerformance: Performance) {
     return plays[invoicePerformance.playID];
@@ -24,11 +24,11 @@ type StatementData = {
   performances: Array<Performance>;
 };
 
-export function renderPlaintext(data: StatementData, plays: Plays) {
+export function renderPlaintext(data: StatementData) {
   let result = `Statements for ${data.customer}\n`;
 
   for (let perf of data.performances) {
-    result += `${getPlayFor(perf).name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
+    result += `${perf.play.name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
   }
 
   result += `Amount owed is ${usd(getTotalAmount())}\n`;
@@ -63,7 +63,7 @@ export function renderPlaintext(data: StatementData, plays: Plays) {
   function getVolumeCreditsFor(performance: Performance) {
     let result = Math.max(performance.audience - 30, 0);
 
-    if ("comedy" === getPlayFor(performance).type) {
+    if ("comedy" === performance.play.type) {
       result += Math.floor(performance.audience / 5);
     }
 
@@ -73,7 +73,7 @@ export function renderPlaintext(data: StatementData, plays: Plays) {
   function getAmountFor(performance: Performance) {
     let result = 0;
 
-    switch (getPlayFor(performance).type) {
+    switch (performance.play.type) {
       case "tragedy":
         result = 40_000;
         if (performance.audience > 30) {
@@ -90,13 +90,9 @@ export function renderPlaintext(data: StatementData, plays: Plays) {
         break;
 
       default:
-        throw new Error(`unknown type: ${getPlayFor(performance).type}`);
+        throw new Error(`unknown type: ${performance.play.type}`);
     }
 
     return result;
-  }
-
-  function getPlayFor(performance: Performance) {
-    return plays[performance.playID];
   }
 }
