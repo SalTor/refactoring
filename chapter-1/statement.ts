@@ -1,6 +1,10 @@
 import type { Invoice, Performance, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
+  return renderPlaintext(invoice, plays);
+}
+
+export function renderPlaintext(invoice: Invoice, plays: Plays) {
   let result = `Statements for ${invoice.customer}\n`;
 
   for (let perf of invoice.performances) {
