@@ -14,11 +14,11 @@ export function statement(invoice: Invoice, plays: Plays) {
   return result;
 
   function getTotalAmount() {
-    let totalAmount = 0;
+    let result = 0;
     for (let perf of invoice.performances) {
-      totalAmount += getAmountFor(perf);
+      result += getAmountFor(perf);
     }
-    return totalAmount;
+    return result;
   }
 
   function getTotalVolumeCredits() {
