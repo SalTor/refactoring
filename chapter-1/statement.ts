@@ -1,11 +1,22 @@
 import type { Invoice, Performance, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
-  return renderPlaintext(invoice, plays);
+  const statementData = {
+    customer: invoice.customer,
+  };
+  return renderPlaintext(statementData, invoice, plays);
 }
 
-export function renderPlaintext(invoice: Invoice, plays: Plays) {
-  let result = `Statements for ${invoice.customer}\n`;
+type StatementData = {
+  customer: string;
+};
+
+export function renderPlaintext(
+  data: StatementData,
+  invoice: Invoice,
+  plays: Plays,
+) {
+  let result = `Statements for ${data.customer}\n`;
 
   for (let perf of invoice.performances) {
     result += `${getPlayFor(perf).name}: ${usd(getAmountFor(perf))} (${perf.audience} seats)\n`;
