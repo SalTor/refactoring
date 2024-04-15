@@ -3,9 +3,20 @@ import type { Invoice, Performance, Plays } from "./types";
 export function statement(invoice: Invoice, plays: Plays) {
   const statementData = {
     customer: invoice.customer,
-    performances: invoice.performances,
+    performances: invoice.performances.map(enrichPerformance),
   };
   return renderPlaintext(statementData, plays);
+
+  function getPlayFor(invoicePerformance: Performance) {
+    return plays[invoicePerformance.playID];
+  }
+
+  function enrichPerformance(invoicePerformance: Performance) {
+    return {
+      ...invoicePerformance,
+      play: getPlayFor(invoicePerformance),
+    };
+  }
 }
 
 type StatementData = {
