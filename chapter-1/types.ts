@@ -10,7 +10,7 @@ export type Performance = {
 
 export type Play = {
   name: string;
-  type: "tragedy" | "comedy";
+  type: string | "tragedy" | "comedy";
 };
 
 export type Plays = Record<string, Play>;
