@@ -12,10 +12,29 @@ export function statement(invoice: Invoice, plays: Plays) {
   }
 
   function enrichPerformance(performance: Performance): EnrichedPerformance {
-    const result = { ...performance } as EnrichedPerformance;
+    const enriched = { ...performance } as EnrichedPerformance;
+    enriched.play = getPlayFor(enriched);
+    enriched.amount = getAmountFor(enriched);
+    enriched.volumeCredits = getVolumeCreditsFor(enriched);
 
-    result.play = getPlayFor(result);
-    result.amount = getAmountFor(result);
+    const { play, amount, volumeCredits } = enriched;
+
+    const result = {
+      ...performance,
+      play,
+      amount,
+      volumeCredits,
+    };
+
+    return result;
+  }
+
+  function getVolumeCreditsFor(performance: EnrichedPerformance) {
+    let result = Math.max(performance.audience - 30, 0);
+
+    if ("comedy" === performance.play.type) {
+      result += Math.floor(performance.audience / 5);
+    }
 
     return result;
   }
@@ -50,6 +69,7 @@ export function statement(invoice: Invoice, plays: Plays) {
 type EnrichedPerformance = Performance & {
   play: Play;
   amount: number;
+  volumeCredits: number;
 };
 
 type StatementData = {
@@ -80,7 +100,7 @@ export function renderPlaintext(data: StatementData) {
   function getTotalVolumeCredits() {
     let result = 0;
     for (let perf of data.performances) {
-      result += getVolumeCreditsFor(perf);
+      result += perf.volumeCredits;
     }
     return result;
   }
@@ -91,15 +111,5 @@ export function renderPlaintext(data: StatementData) {
       currency: "USD",
       minimumFractionDigits: 2,
     }).format(cents / 100);
-  }
-
-  function getVolumeCreditsFor(performance: EnrichedPerformance) {
-    let result = Math.max(performance.audience - 30, 0);
-
-    if ("comedy" === performance.play.type) {
-      result += Math.floor(performance.audience / 5);
-    }
-
-    return result;
   }
 }
