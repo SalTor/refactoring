@@ -14,7 +14,34 @@ export function statement(invoice: Invoice, plays: Plays) {
   function enrichPerformance(performance: Performance): EnrichedPerformance {
     const result = { ...performance } as EnrichedPerformance;
 
-    result.play = getPlayFor(performance);
+    result.play = getPlayFor(result);
+    result.amount = getAmountFor(result);
+
+    return result;
+  }
+
+  function getAmountFor(performance: EnrichedPerformance) {
+    let result = 0;
+
+    switch (performance.play.type) {
+      case "tragedy":
+        result = 40_000;
+        if (performance.audience > 30) {
+          result += 1_000 * (performance.audience - 30);
+        }
+        break;
+
+      case "comedy":
+        result = 30_000;
+        if (performance.audience > 20) {
+          result += 10_000 + 500 * (performance.audience - 20);
+        }
+        result += 300 * performance.audience;
+        break;
+
+      default:
+        throw new Error(`unknown type: ${performance.play.type}`);
+    }
 
     return result;
   }
@@ -22,6 +49,7 @@ export function statement(invoice: Invoice, plays: Plays) {
 
 type EnrichedPerformance = Performance & {
   play: Play;
+  amount: number;
 };
 
 type StatementData = {
