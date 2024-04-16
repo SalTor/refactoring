@@ -6,10 +6,9 @@ export type Invoice = {
 export type Performance = {
   playID: string;
   audience: number;
-  play: Play;
 };
 
-type Play = {
+export type Play = {
   name: string;
   type: string | "tragedy" | "comedy";
 };

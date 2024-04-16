@@ -1,4 +1,4 @@
-import type { Invoice, Performance, Plays } from "./types";
+import type { Invoice, Performance, Play, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
   const statementData = {
@@ -7,21 +7,26 @@ export function statement(invoice: Invoice, plays: Plays) {
   };
   return renderPlaintext(statementData);
 
-  function getPlayFor(invoicePerformance: Performance) {
-    return plays[invoicePerformance.playID];
+  function getPlayFor(performance: Performance) {
+    return plays[performance.playID];
   }
 
-  function enrichPerformance(invoicePerformance: Performance) {
-    return {
-      ...invoicePerformance,
-      play: getPlayFor(invoicePerformance),
-    };
+  function enrichPerformance(performance: Performance): EnrichedPerformance {
+    const result = { ...performance } as EnrichedPerformance;
+
+    result.play = getPlayFor(performance);
+
+    return result;
   }
 }
 
+type EnrichedPerformance = Performance & {
+  play: Play;
+};
+
 type StatementData = {
   customer: string;
-  performances: Array<Performance>;
+  performances: Array<EnrichedPerformance>;
 };
 
 export function renderPlaintext(data: StatementData) {
@@ -60,7 +65,7 @@ export function renderPlaintext(data: StatementData) {
     }).format(cents / 100);
   }
 
-  function getVolumeCreditsFor(performance: Performance) {
+  function getVolumeCreditsFor(performance: EnrichedPerformance) {
     let result = Math.max(performance.audience - 30, 0);
 
     if ("comedy" === performance.play.type) {
@@ -70,7 +75,7 @@ export function renderPlaintext(data: StatementData) {
     return result;
   }
 
-  function getAmountFor(performance: Performance) {
+  function getAmountFor(performance: EnrichedPerformance) {
     let result = 0;
 
     switch (performance.play.type) {
