@@ -1,9 +1,12 @@
 import type { Invoice, Performance, Play, Plays } from "./types";
 
 export function statement(invoice: Invoice, plays: Plays) {
+  const performances = invoice.performances.map(enrichPerformance);
   const statementData = {
     customer: invoice.customer,
-    performances: invoice.performances.map(enrichPerformance),
+    performances,
+    totalAmount: getTotalAmount(performances),
+    totalVolumeCredits: getTotalVolumeCredits(performances),
   };
   return renderPlaintext(statementData);
 
@@ -16,6 +19,22 @@ export function statement(invoice: Invoice, plays: Plays) {
       amount: getAmountFor(performance, play),
       volumeCredits: getVolumeCreditsFor(performance, play),
     };
+  }
+
+  function getTotalAmount(performances: Array<EnrichedPerformance>) {
+    let result = 0;
+    for (let perf of performances) {
+      result += perf.amount;
+    }
+    return result;
+  }
+
+  function getTotalVolumeCredits(performances: Array<EnrichedPerformance>) {
+    let result = 0;
+    for (let perf of performances) {
+      result += perf.volumeCredits;
+    }
+    return result;
   }
 
   function getPlayFor(performance: Performance) {
@@ -68,6 +87,8 @@ type EnrichedPerformance = Performance & {
 type StatementData = {
   customer: string;
   performances: Array<EnrichedPerformance>;
+  totalAmount: number;
+  totalVolumeCredits: number;
 };
 
 export function renderPlaintext(data: StatementData) {
@@ -77,26 +98,10 @@ export function renderPlaintext(data: StatementData) {
     result += `${perf.play.name}: ${usd(perf.amount)} (${perf.audience} seats)\n`;
   }
 
-  result += `Amount owed is ${usd(getTotalAmount())}\n`;
-  result += `You earned ${getTotalVolumeCredits()} credits\n`;
+  result += `Amount owed is ${usd(data.totalAmount)}\n`;
+  result += `You earned ${data.totalVolumeCredits} credits\n`;
 
   return result;
-
-  function getTotalAmount() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.amount;
-    }
-    return result;
-  }
-
-  function getTotalVolumeCredits() {
-    let result = 0;
-    for (let perf of data.performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
-  }
 
   function usd(cents: number) {
     return new Intl.NumberFormat("en-US", {
