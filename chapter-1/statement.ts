@@ -7,42 +7,35 @@ export function statement(invoice: Invoice, plays: Plays) {
   };
   return renderPlaintext(statementData);
 
+  function enrichPerformance(performance: Performance): EnrichedPerformance {
+    const play = getPlayFor(performance);
+
+    return {
+      ...performance,
+      play,
+      amount: getAmountFor(performance, play),
+      volumeCredits: getVolumeCreditsFor(performance, play),
+    };
+  }
+
   function getPlayFor(performance: Performance) {
     return plays[performance.playID];
   }
 
-  function enrichPerformance(performance: Performance): EnrichedPerformance {
-    const enriched = { ...performance } as EnrichedPerformance;
-    enriched.play = getPlayFor(enriched);
-    enriched.amount = getAmountFor(enriched);
-    enriched.volumeCredits = getVolumeCreditsFor(enriched);
-
-    const { play, amount, volumeCredits } = enriched;
-
-    const result = {
-      ...performance,
-      play,
-      amount,
-      volumeCredits,
-    };
-
-    return result;
-  }
-
-  function getVolumeCreditsFor(performance: EnrichedPerformance) {
+  function getVolumeCreditsFor(performance: Performance, play: Play) {
     let result = Math.max(performance.audience - 30, 0);
 
-    if ("comedy" === performance.play.type) {
+    if ("comedy" === play.type) {
       result += Math.floor(performance.audience / 5);
     }
 
     return result;
   }
 
-  function getAmountFor(performance: EnrichedPerformance) {
+  function getAmountFor(performance: Performance, play: Play) {
     let result = 0;
 
-    switch (performance.play.type) {
+    switch (play.type) {
       case "tragedy":
         result = 40_000;
         if (performance.audience > 30) {
@@ -59,7 +52,7 @@ export function statement(invoice: Invoice, plays: Plays) {
         break;
 
       default:
-        throw new Error(`unknown type: ${performance.play.type}`);
+        throw new Error(`unknown type: ${play.type}`);
     }
 
     return result;
