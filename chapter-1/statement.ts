@@ -22,19 +22,11 @@ export function statement(invoice: Invoice, plays: Plays) {
   }
 
   function getTotalAmount(performances: Array<EnrichedPerformance>) {
-    let result = 0;
-    for (let perf of performances) {
-      result += perf.amount;
-    }
-    return result;
+    return performances.reduce((sum, perf) => sum + perf.amount, 0);
   }
 
   function getTotalVolumeCredits(performances: Array<EnrichedPerformance>) {
-    let result = 0;
-    for (let perf of performances) {
-      result += perf.volumeCredits;
-    }
-    return result;
+    return performances.reduce((sum, perf) => sum + perf.volumeCredits, 0);
   }
 
   function getPlayFor(performance: Performance) {
