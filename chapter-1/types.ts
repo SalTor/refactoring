@@ -14,3 +14,16 @@ export type Play = {
 };
 
 export type Plays = Record<string, Play>;
+
+export type EnrichedPerformance = Performance & {
+  play: Play;
+  amount: number;
+  volumeCredits: number;
+};
+
+export type StatementData = {
+  customer: string;
+  performances: Array<EnrichedPerformance>;
+  totalAmount: number;
+  totalVolumeCredits: number;
+};
