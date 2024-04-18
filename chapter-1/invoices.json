@@ -13,6 +13,10 @@
       {
         "playID": "othello",
         "audience": 40
+      },
+      {
+        "playID": "bewitched",
+        "audience": 100
       }
     ]
   }

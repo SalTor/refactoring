@@ -10,5 +10,9 @@
   "othello": {
 	  "name": "Othello",
 	  "type": "tragedy"
+  },
+  "bewitched": {
+    "name": "Bewitched",
+    "type": "fantasy"
   }
 }

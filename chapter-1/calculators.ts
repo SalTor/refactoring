@@ -9,6 +9,8 @@ export function createPerformanceCalculator(
       return new TragedyCalculator(performance, play);
     case "comedy":
       return new ComedyCalculator(performance, play);
+    case "fantasy":
+      return new FantasyCalculator(performance, play);
     default:
       throw new Error(`unknown type: ${play.type}`);
   }
@@ -25,6 +27,13 @@ class PerformanceCalculator {
 
   get volumeCredits() {
     return Math.max(this.performance.audience - 30, 0);
+  }
+
+  get amount() {
+    if (this.play.type) {
+      throw new Error("Subclass responsibility");
+    }
+    return 0;
   }
 }
 
@@ -47,6 +56,16 @@ class TragedyCalculator extends PerformanceCalculator {
     let result = 40_000;
     if (this.performance.audience > 30) {
       result += 1_000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
+
+class FantasyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 10_000;
+    if (this.performance.audience > 40) {
+      result += 30_000 + 800 * (this.performance.audience - 40);
     }
     return result;
   }
