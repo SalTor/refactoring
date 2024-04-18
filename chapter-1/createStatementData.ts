@@ -53,17 +53,15 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
   };
 
   function enrichPerformance(performance: Performance): EnrichedPerformance {
-    const play = getPlayFor(performance);
-
     const calculator = new PerformanceCalculator(
       performance,
       getPlayFor(performance),
     );
 
     return Object.assign(performance, {
-      play,
-      amount: getAmountFor(performance, play),
-      volumeCredits: getVolumeCreditsFor(performance, play),
+      play: calculator.play,
+      amount: calculator.amount,
+      volumeCredits: getVolumeCreditsFor(performance, calculator.play),
     });
   }
 
@@ -87,9 +85,5 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
     }
 
     return result;
-  }
-
-  function getAmountFor(performance: Performance, play: Play) {
-    return new PerformanceCalculator(performance, play).amount;
   }
 }
