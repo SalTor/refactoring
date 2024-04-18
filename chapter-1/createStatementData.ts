@@ -71,7 +71,7 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
     return Object.assign(performance, {
       play: calculator.play,
       amount: calculator.amount,
-      volumeCredits: getVolumeCreditsFor(performance, calculator.play),
+      volumeCredits: calculator.volumeCredits,
     });
   }
 
@@ -85,9 +85,5 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
 
   function getPlayFor(performance: Performance) {
     return plays[performance.playID];
-  }
-
-  function getVolumeCreditsFor(performance: Performance, play: Play) {
-    return new PerformanceCalculator(performance, play).volumeCredits;
   }
 }
