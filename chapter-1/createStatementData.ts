@@ -6,6 +6,16 @@ import {
   Plays,
 } from "./types";
 
+class PerformanceCalculator {
+  performance: Performance;
+  play: Play;
+
+  constructor(performance: Performance, play: Play) {
+    this.performance = performance;
+    this.play = play;
+  }
+}
+
 export function createStatementData(invoice: Invoice, plays: Plays) {
   const performances = invoice.performances.map(enrichPerformance);
 
@@ -18,6 +28,11 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
 
   function enrichPerformance(performance: Performance): EnrichedPerformance {
     const play = getPlayFor(performance);
+
+    const calculator = new PerformanceCalculator(
+      performance,
+      getPlayFor(performance),
+    );
 
     return Object.assign(performance, {
       play,
