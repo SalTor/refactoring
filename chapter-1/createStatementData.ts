@@ -19,12 +19,11 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
   function enrichPerformance(performance: Performance): EnrichedPerformance {
     const play = getPlayFor(performance);
 
-    return {
-      ...performance,
+    return Object.assign(performance, {
       play,
       amount: getAmountFor(performance, play),
       volumeCredits: getVolumeCreditsFor(performance, play),
-    };
+    });
   }
 
   function getTotalAmount(performances: Array<EnrichedPerformance>) {
