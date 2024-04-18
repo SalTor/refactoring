@@ -52,6 +52,9 @@ class PerformanceCalculator {
   }
 }
 
+class ComedyCalculator extends PerformanceCalculator {}
+class TragedyCalculator extends PerformanceCalculator {}
+
 export function createStatementData(invoice: Invoice, plays: Plays) {
   const performances = invoice.performances.map(enrichPerformance);
 
@@ -63,7 +66,14 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
   };
 
   function createPerformanceCalculator(performance: Performance, play: Play) {
-    return new PerformanceCalculator(performance, play);
+    switch (play.type) {
+      case "tragedy":
+        return new TragedyCalculator(performance, play);
+      case "comedy":
+        return new ComedyCalculator(performance, play);
+      default:
+        throw new Error(`unknown type: ${play.type}`);
+    }
   }
 
   function enrichPerformance(performance: Performance): EnrichedPerformance {
