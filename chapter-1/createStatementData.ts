@@ -15,27 +15,6 @@ class PerformanceCalculator {
     this.play = play;
   }
 
-  get amount() {
-    let result = 0;
-
-    switch (this.play.type) {
-      case "tragedy":
-        result = 40_000;
-        if (this.performance.audience > 30) {
-          result += 1_000 * (this.performance.audience - 30);
-        }
-        break;
-
-      case "comedy":
-        throw new Error("oops");
-
-      default:
-        throw new Error(`unknown type: ${this.play.type}`);
-    }
-
-    return result;
-  }
-
   get volumeCredits() {
     return Math.max(this.performance.audience - 30, 0);
   }
@@ -57,7 +36,15 @@ class ComedyCalculator extends PerformanceCalculator {
     );
   }
 }
-class TragedyCalculator extends PerformanceCalculator {}
+class TragedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 40_000;
+    if (this.performance.audience > 30) {
+      result += 1_000 * (this.performance.audience - 30);
+    }
+    return result;
+  }
+}
 
 export function createStatementData(invoice: Invoice, plays: Plays) {
   const performances = invoice.performances.map(enrichPerformance);
