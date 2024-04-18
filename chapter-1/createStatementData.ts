@@ -27,12 +27,7 @@ class PerformanceCalculator {
         break;
 
       case "comedy":
-        result = 30_000;
-        if (this.performance.audience > 20) {
-          result += 10_000 + 500 * (this.performance.audience - 20);
-        }
-        result += 300 * this.performance.audience;
-        break;
+        throw new Error("oops");
 
       default:
         throw new Error(`unknown type: ${this.play.type}`);
@@ -52,7 +47,15 @@ class PerformanceCalculator {
   }
 }
 
-class ComedyCalculator extends PerformanceCalculator {}
+class ComedyCalculator extends PerformanceCalculator {
+  get amount() {
+    let result = 30_000;
+    if (this.performance.audience > 20) {
+      result += 10_000 + 500 * (this.performance.audience - 20);
+    }
+    return (result += 300 * this.performance.audience);
+  }
+}
 class TragedyCalculator extends PerformanceCalculator {}
 
 export function createStatementData(invoice: Invoice, plays: Plays) {
