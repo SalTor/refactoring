@@ -1,11 +1,5 @@
-import { ComedyCalculator, TragedyCalculator } from "./calculators";
-import {
-  EnrichedPerformance,
-  Performance,
-  Invoice,
-  Play,
-  Plays,
-} from "./types";
+import { createPerformanceCalculator } from "./calculators";
+import { EnrichedPerformance, Performance, Invoice, Plays } from "./types";
 
 export function createStatementData(invoice: Invoice, plays: Plays) {
   const performances = invoice.performances.map(enrichPerformance);
@@ -16,17 +10,6 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
     totalAmount: getTotalAmount(performances),
     totalVolumeCredits: getTotalVolumeCredits(performances),
   };
-
-  function createPerformanceCalculator(performance: Performance, play: Play) {
-    switch (play.type) {
-      case "tragedy":
-        return new TragedyCalculator(performance, play);
-      case "comedy":
-        return new ComedyCalculator(performance, play);
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
-  }
 
   function enrichPerformance(performance: Performance): EnrichedPerformance {
     const calculator = createPerformanceCalculator(

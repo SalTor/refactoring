@@ -1,5 +1,19 @@
 import { Play, Performance } from "./types";
 
+export function createPerformanceCalculator(
+  performance: Performance,
+  play: Play,
+) {
+  switch (play.type) {
+    case "tragedy":
+      return new TragedyCalculator(performance, play);
+    case "comedy":
+      return new ComedyCalculator(performance, play);
+    default:
+      throw new Error(`unknown type: ${play.type}`);
+  }
+}
+
 class PerformanceCalculator {
   performance: Performance;
   play: Play;
