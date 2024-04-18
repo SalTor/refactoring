@@ -14,6 +14,32 @@ class PerformanceCalculator {
     this.performance = performance;
     this.play = play;
   }
+
+  get amount() {
+    let result = 0;
+
+    switch (this.play.type) {
+      case "tragedy":
+        result = 40_000;
+        if (this.performance.audience > 30) {
+          result += 1_000 * (this.performance.audience - 30);
+        }
+        break;
+
+      case "comedy":
+        result = 30_000;
+        if (this.performance.audience > 20) {
+          result += 10_000 + 500 * (this.performance.audience - 20);
+        }
+        result += 300 * this.performance.audience;
+        break;
+
+      default:
+        throw new Error(`unknown type: ${this.play.type}`);
+    }
+
+    return result;
+  }
 }
 
 export function createStatementData(invoice: Invoice, plays: Plays) {
@@ -64,28 +90,6 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
   }
 
   function getAmountFor(performance: Performance, play: Play) {
-    let result = 0;
-
-    switch (play.type) {
-      case "tragedy":
-        result = 40_000;
-        if (performance.audience > 30) {
-          result += 1_000 * (performance.audience - 30);
-        }
-        break;
-
-      case "comedy":
-        result = 30_000;
-        if (performance.audience > 20) {
-          result += 10_000 + 500 * (performance.audience - 20);
-        }
-        result += 300 * performance.audience;
-        break;
-
-      default:
-        throw new Error(`unknown type: ${play.type}`);
-    }
-
-    return result;
+    return new PerformanceCalculator(performance, play).amount;
   }
 }
