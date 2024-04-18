@@ -28,7 +28,7 @@ class PerformanceCalculator {
   }
 }
 
-export class ComedyCalculator extends PerformanceCalculator {
+class ComedyCalculator extends PerformanceCalculator {
   get amount() {
     let result = 30_000;
     if (this.performance.audience > 20) {
@@ -42,7 +42,7 @@ export class ComedyCalculator extends PerformanceCalculator {
   }
 }
 
-export class TragedyCalculator extends PerformanceCalculator {
+class TragedyCalculator extends PerformanceCalculator {
   get amount() {
     let result = 40_000;
     if (this.performance.audience > 30) {
