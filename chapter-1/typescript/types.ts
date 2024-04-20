@@ -4,7 +4,7 @@ export type Invoice = {
 };
 
 export type Performance = {
-  playID: string;
+  play_id: string;
   audience: number;
 };
 

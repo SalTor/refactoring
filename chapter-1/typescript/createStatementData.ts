@@ -33,6 +33,6 @@ export function createStatementData(invoice: Invoice, plays: Plays) {
   }
 
   function getPlayFor(performance: Performance) {
-    return plays[performance.playID];
+    return plays[performance.play_id];
   }
 }

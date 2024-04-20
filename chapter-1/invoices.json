@@ -3,19 +3,19 @@
     "customer": "BigCo",
     "performances": [
       {
-        "playID": "hamlet",
+        "play_id": "hamlet",
         "audience": 55
       },
       {
-        "playID": "as-like",
+        "play_id": "as-like",
         "audience": 35
       },
       {
-        "playID": "othello",
+        "play_id": "othello",
         "audience": 40
       },
       {
-        "playID": "bewitched",
+        "play_id": "bewitched",
         "audience": 100
       }
     ]
