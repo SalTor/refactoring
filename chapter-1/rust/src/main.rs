@@ -12,6 +12,21 @@ fn main() {
 fn statement(invoice: Invoice, plays: HashMap<String, Play>) {
   println!("{:?}", invoice);
   println!("{:?}", plays);
+
+  let total_amount = 0;
+  let volume_credits = 0;
+  let result = format!("Statement for {client_name}\n", client_name = invoice.customer);
+
+  println!("{} {} {}", total_amount, volume_credits, result);
+
+  for perf in invoice.performances.iter() {
+    let play = plays.get(&perf.play_id);
+
+    match play {
+      Some(play) => println!("{:?}", play),
+      None => println!("Play not found")
+    }
+  }
 }
 
 fn read_plays_from_file<P: AsRef<Path>>(path: P) -> Result<HashMap<String, Play>, Box<dyn Error>> {
