@@ -1,6 +1,6 @@
 import { htmStatement, statement } from "./statement";
-import invoices from "./invoices.json";
-import plays from "./plays.json";
+import invoices from "../invoices.json";
+import plays from "../plays.json";
 
 test("Render as text", () => {
   expect(statement(invoices[0], plays)).toBe(`Statements for BigCo
