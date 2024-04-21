@@ -30,7 +30,7 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
             }
 
             result += &format!(
-                "  {play_name}: {amount} ({seats} seats)\n",
+                "    {play_name}: {amount} ({seats} seats)\n",
                 play_name = play.name,
                 amount = Money::from_major((this_amount / 100).into(), iso::USD),
                 seats = perf.audience
@@ -43,7 +43,7 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
         "Amount owed is {amount}\n",
         amount = Money::from_major((total_amount / 100).into(), iso::USD)
     );
-    result += &format!("You earned {credits} credits\n", credits = volume_credits);
+    result += &format!("You earned {credits} credits", credits = volume_credits);
 
     result
 }
@@ -105,4 +105,21 @@ struct Performance {
 struct Play {
     name: String,
     r#type: String,
+}
+
+#[test]
+fn text_statement() {
+    let invoices = read_invoices_from_file("../invoices.json").unwrap();
+    let plays = read_plays_from_file("../plays.json").unwrap();
+
+    assert_eq!(
+        statement(invoices.into_iter().next().unwrap(), plays),
+        "Statement for BigCo
+    Hamlet: $650 (55 seats)
+    As You Like It: $580 (35 seats)
+    Othello: $500 (40 seats)
+    Bewitched: $880 (100 seats)
+Amount owed is $2,610
+You earned 117 credits"
+    )
 }
