@@ -19,24 +19,23 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     );
 
     for perf in invoice.performances.iter() {
-        if let Some(play) = plays.get(&perf.play_id) {
-            let play_type = play.r#type.to_owned();
+        let play = play_for(perf, plays.clone());
+        let play_type = play.r#type.to_owned();
 
-            let this_amount = amount_for(perf, play);
+        let this_amount = amount_for(perf, &play);
 
-            volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
-            if play_type.as_str() == "comedy" {
-                volume_credits += i32::from(perf.audience / 5);
-            }
+        volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
+        if play_type.as_str() == "comedy" {
+            volume_credits += i32::from(perf.audience / 5);
+        }
 
-            result += &format!(
-                "    {play_name}: {amount} ({seats} seats)\n",
-                play_name = play.name,
-                amount = Money::from_major((this_amount / 100).into(), iso::USD),
-                seats = perf.audience
-            );
-            total_amount += this_amount;
-        };
+        result += &format!(
+            "    {play_name}: {amount} ({seats} seats)\n",
+            play_name = play.name,
+            amount = Money::from_major((this_amount / 100).into(), iso::USD),
+            seats = perf.audience
+        );
+        total_amount += this_amount;
     }
 
     result += &format!(
@@ -46,6 +45,10 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     result += &format!("You earned {credits} credits", credits = volume_credits);
 
     result
+}
+
+fn play_for(perf: &Performance, plays: HashMap<String, Play>) -> Play {
+  plays.get(&perf.play_id).unwrap().clone()
 }
 
 fn amount_for(perf: &Performance, play: &Play) -> i32 {
@@ -101,7 +104,7 @@ struct Performance {
     audience: i8,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Play {
     name: String,
     r#type: String,
