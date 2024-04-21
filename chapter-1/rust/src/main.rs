@@ -67,7 +67,7 @@ fn amount_for(perf: &Performance, play: &Play) -> i32 {
         "fantasy" => {
             let mut amount: i32 = 10000;
             if perf.audience > 40 {
-                amount += 30000 + 800 * i32::from(perf.audience - 40)
+                amount += 30000 + 800 * i32::from(perf.audience - 40);
             }
             amount
         }
