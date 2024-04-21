@@ -23,23 +23,8 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     for perf in invoice.performances.iter() {
         if let Some(play) = plays.get(&perf.play_id) {
             let play_type = play.r#type.to_owned();
-            let this_amount = match play_type.as_str() {
-                "tragedy" => {
-                    let mut amount: i32 = 40000;
-                    if perf.audience > 30 {
-                        amount += 1000 * i32::from(perf.audience - 30);
-                    }
-                    amount
-                }
-                "comedy" => {
-                    let mut amount: i32 = 30000;
-                    if perf.audience > 20 {
-                        amount += 10000 + 500 * i32::from(perf.audience - 20);
-                    }
-                    amount + 300 * i32::from(perf.audience)
-                }
-                _ => continue,
-            };
+
+            let this_amount = amount_for(perf, play);
 
             volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
             if play_type.as_str() == "comedy" {
@@ -60,6 +45,33 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     result += &format!("You earned {credits} credits\n", credits = volume_credits);
 
     result
+}
+
+fn amount_for(perf: &Performance, play: &Play) -> i32 {
+  match play.r#type.to_owned().as_str() {
+    "tragedy" => {
+        let mut amount: i32 = 40000;
+        if perf.audience > 30 {
+            amount += 1000 * i32::from(perf.audience - 30);
+        }
+        amount
+    }
+    "comedy" => {
+        let mut amount: i32 = 30000;
+        if perf.audience > 20 {
+            amount += 10000 + 500 * i32::from(perf.audience - 20);
+        }
+        amount + 300 * i32::from(perf.audience)
+    }
+    "fantasy" => {
+        let mut amount: i32 = 10000;
+        if perf.audience > 40 {
+            amount += 30000 + 800 * i32::from(perf.audience - 40)
+        }
+        amount
+    }
+    _ => 0
+  }
 }
 
 fn read_plays_from_file<P: AsRef<Path>>(path: P) -> Result<HashMap<String, Play>, Box<dyn Error>> {
