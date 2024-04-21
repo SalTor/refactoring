@@ -18,8 +18,6 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
         client_name = invoice.customer
     );
 
-    println!("{} {} {}", total_amount, volume_credits, result);
-
     for perf in invoice.performances.iter() {
         if let Some(play) = plays.get(&perf.play_id) {
             let play_type = play.r#type.to_owned();
@@ -32,7 +30,7 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
             }
 
             result += &format!(
-                " {play_name}: {amount} ({seats} seats)\n",
+                "  {play_name}: {amount} ({seats} seats)\n",
                 play_name = play.name,
                 amount = Money::from_major((this_amount / 100).into(), iso::USD),
                 seats = perf.audience
@@ -41,37 +39,40 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
         };
     }
 
-    result += &format!("Amount owed is {amount}\n", amount = Money::from_major((total_amount / 100).into(), iso::USD));
+    result += &format!(
+        "Amount owed is {amount}\n",
+        amount = Money::from_major((total_amount / 100).into(), iso::USD)
+    );
     result += &format!("You earned {credits} credits\n", credits = volume_credits);
 
     result
 }
 
 fn amount_for(perf: &Performance, play: &Play) -> i32 {
-  match play.r#type.to_owned().as_str() {
-    "tragedy" => {
-        let mut amount: i32 = 40000;
-        if perf.audience > 30 {
-            amount += 1000 * i32::from(perf.audience - 30);
+    match play.r#type.to_owned().as_str() {
+        "tragedy" => {
+            let mut amount: i32 = 40000;
+            if perf.audience > 30 {
+                amount += 1000 * i32::from(perf.audience - 30);
+            }
+            amount
         }
-        amount
-    }
-    "comedy" => {
-        let mut amount: i32 = 30000;
-        if perf.audience > 20 {
-            amount += 10000 + 500 * i32::from(perf.audience - 20);
+        "comedy" => {
+            let mut amount: i32 = 30000;
+            if perf.audience > 20 {
+                amount += 10000 + 500 * i32::from(perf.audience - 20);
+            }
+            amount + 300 * i32::from(perf.audience)
         }
-        amount + 300 * i32::from(perf.audience)
-    }
-    "fantasy" => {
-        let mut amount: i32 = 10000;
-        if perf.audience > 40 {
-            amount += 30000 + 800 * i32::from(perf.audience - 40)
+        "fantasy" => {
+            let mut amount: i32 = 10000;
+            if perf.audience > 40 {
+                amount += 30000 + 800 * i32::from(perf.audience - 40)
+            }
+            amount
         }
-        amount
+        _ => 0,
     }
-    _ => 0
-  }
 }
 
 fn read_plays_from_file<P: AsRef<Path>>(path: P) -> Result<HashMap<String, Play>, Box<dyn Error>> {
