@@ -1,6 +1,6 @@
 use std::{cmp, collections::HashMap, error::Error, fs::File, io::BufReader, path::Path};
 
-use rusty_money::{iso, Money};
+use rusty_money::{iso::{self, Currency}, Money};
 use serde::{Deserialize, Serialize};
 
 fn main() {
@@ -32,7 +32,7 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
             play_name = play.name,
-            amount = Money::from_major((this_amount / 100).into(), iso::USD),
+            amount = usd(this_amount),
             seats = perf.audience
         );
         total_amount += this_amount;
@@ -40,11 +40,17 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
 
     result += &format!(
         "Amount owed is {amount}\n",
-        amount = Money::from_major((total_amount / 100).into(), iso::USD)
+        amount = usd(total_amount)
     );
     result += &format!("You earned {credits} credits", credits = volume_credits);
 
     result
+}
+
+fn usd<'a>(cents: i32) -> Money<'a, Currency> {
+  let result = Money::from_major((cents / 100).into(), iso::USD);
+
+  result
 }
 
 fn play_for(perf: &Performance, plays: HashMap<String, Play>) -> Play {
