@@ -13,13 +13,21 @@ fn main() {
 }
 
 fn statement(invoice: Invoice) -> String {
-  render_plain_text(invoice)
+  let statement_data = StatementData {
+    customer: invoice.customer.clone()
+  };
+
+  render_plain_text(statement_data, invoice)
 }
 
-fn render_plain_text(invoice: Invoice) -> String {
+struct StatementData {
+  customer: String
+}
+
+fn render_plain_text(data: StatementData, invoice: Invoice) -> String {
     let mut result = format!(
         "Statement for {client_name}\n",
-        client_name = invoice.customer
+        client_name = data.customer
     );
 
     for perf in invoice.performances.iter() {
