@@ -13,16 +13,18 @@ fn main() {
 }
 
 fn statement(invoice: Invoice) -> String {
-    let mut total_amount = 0;
-    let mut volume_credits = 0;
     let mut result = format!(
         "Statement for {client_name}\n",
         client_name = invoice.customer
     );
 
+    let mut volume_credits = 0;
     for perf in invoice.performances.iter() {
         volume_credits += volume_credits_for(perf);
+    }
 
+    let mut total_amount = 0;
+    for perf in invoice.performances.iter() {
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
             play_name = play_for(perf).name,
