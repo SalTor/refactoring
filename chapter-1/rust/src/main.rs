@@ -56,9 +56,7 @@ fn play_for(perf: &Performance) -> Play {
 }
 
 fn amount_for(perf: &Performance) -> i32 {
-    let play = play_for(perf);
-
-    match play.r#type.to_owned().as_str() {
+    match play_for(perf).r#type.to_owned().as_str() {
         "tragedy" => {
             let mut amount: i32 = 40000;
             if perf.audience > 30 {
