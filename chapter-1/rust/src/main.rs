@@ -13,6 +13,10 @@ fn main() {
 }
 
 fn statement(invoice: Invoice) -> String {
+  render_plain_text(invoice)
+}
+
+fn render_plain_text(invoice: Invoice) -> String {
     let mut result = format!(
         "Statement for {client_name}\n",
         client_name = invoice.customer
