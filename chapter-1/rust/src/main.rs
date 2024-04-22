@@ -1,6 +1,9 @@
 use std::{cmp, collections::HashMap, error::Error, fs::File, io::BufReader, path::Path};
 
-use rusty_money::{iso::{self, Currency}, Money};
+use rusty_money::{
+    iso::{self, Currency},
+    Money,
+};
 use serde::{Deserialize, Serialize};
 
 fn main() {
@@ -19,45 +22,39 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     );
 
     for perf in invoice.performances.iter() {
-        let play = play_for(perf, plays.clone());
-        let play_type = play.r#type.to_owned();
-
-        let this_amount = amount_for(perf, &play);
+        let this_amount = amount_for(perf, play_for(perf, plays.clone()));
 
         volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
-        if play_type.as_str() == "comedy" {
+        if play_for(perf, plays.clone()).r#type.as_str() == "comedy" {
             volume_credits += i32::from(perf.audience / 5);
         }
 
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
-            play_name = play.name,
+            play_name = play_for(perf, plays.clone()).name,
             amount = usd(this_amount),
             seats = perf.audience
         );
         total_amount += this_amount;
     }
 
-    result += &format!(
-        "Amount owed is {amount}\n",
-        amount = usd(total_amount)
-    );
+    result += &format!("Amount owed is {amount}\n", amount = usd(total_amount));
     result += &format!("You earned {credits} credits", credits = volume_credits);
 
     result
 }
 
 fn usd<'a>(cents: i32) -> Money<'a, Currency> {
-  let result = Money::from_major((cents / 100).into(), iso::USD);
+    let result = Money::from_major((cents / 100).into(), iso::USD);
 
-  result
+    result
 }
 
 fn play_for(perf: &Performance, plays: HashMap<String, Play>) -> Play {
-  plays.get(&perf.play_id).unwrap().clone()
+    plays.get(&perf.play_id).unwrap().clone()
 }
 
-fn amount_for(perf: &Performance, play: &Play) -> i32 {
+fn amount_for(perf: &Performance, play: Play) -> i32 {
     match play.r#type.to_owned().as_str() {
         "tragedy" => {
             let mut amount: i32 = 40000;
