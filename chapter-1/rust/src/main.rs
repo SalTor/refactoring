@@ -21,25 +21,28 @@ fn statement(invoice: Invoice) -> String {
     );
 
     for perf in invoice.performances.iter() {
-        let this_amount = amount_for(perf);
-
-        volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
-        if play_for(perf).r#type.as_str() == "comedy" {
-            volume_credits += i32::from(perf.audience / 5);
-        }
+        volume_credits += volume_credits_for(perf);
 
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
             play_name = play_for(perf).name,
-            amount = usd(this_amount),
+            amount = usd(amount_for(perf)),
             seats = perf.audience
         );
-        total_amount += this_amount;
+        total_amount += amount_for(perf);
     }
 
     result += &format!("Amount owed is {amount}\n", amount = usd(total_amount));
     result += &format!("You earned {credits} credits", credits = volume_credits);
 
+    result
+}
+
+fn volume_credits_for(perf: &Performance) -> i32 {
+    let mut result = i32::from(cmp::max(perf.audience - 30, 0));
+    if play_for(perf).r#type.as_str() == "comedy" {
+        result += i32::from(perf.audience / 5);
+    }
     result
 }
 
