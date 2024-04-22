@@ -18,8 +18,6 @@ fn statement(invoice: Invoice) -> String {
         client_name = invoice.customer
     );
 
-    let volume_credits = total_volume_credits();
-
     let mut total_amount = 0;
     for perf in invoice.performances.iter() {
         result += &format!(
@@ -32,7 +30,7 @@ fn statement(invoice: Invoice) -> String {
     }
 
     result += &format!("Amount owed is {amount}\n", amount = usd(total_amount));
-    result += &format!("You earned {credits} credits", credits = volume_credits);
+    result += &format!("You earned {credits} credits", credits = total_volume_credits());
 
     result
 }
