@@ -18,10 +18,7 @@ fn statement(invoice: Invoice) -> String {
         client_name = invoice.customer
     );
 
-    let mut volume_credits = 0;
-    for perf in invoice.performances.iter() {
-        volume_credits += volume_credits_for(perf);
-    }
+    let volume_credits = total_volume_credits();
 
     let mut total_amount = 0;
     for perf in invoice.performances.iter() {
@@ -38,6 +35,16 @@ fn statement(invoice: Invoice) -> String {
     result += &format!("You earned {credits} credits", credits = volume_credits);
 
     result
+}
+
+fn total_volume_credits() -> i32 {
+    let invoices = read_invoices_from_file("../invoices.json").unwrap();
+    let invoice = invoices.into_iter().next().unwrap();
+    let mut volume_credits = 0;
+    for perf in invoice.performances.iter() {
+        volume_credits += volume_credits_for(perf);
+    }
+    volume_credits
 }
 
 fn volume_credits_for(perf: &Performance) -> i32 {
