@@ -18,7 +18,7 @@ fn statement(invoice: Invoice) -> String {
         client_name = invoice.customer
     );
 
-    let mut total_amount = 0;
+    let total_amount = get_total_amount();
     for perf in invoice.performances.iter() {
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
@@ -26,12 +26,21 @@ fn statement(invoice: Invoice) -> String {
             amount = usd(amount_for(perf)),
             seats = perf.audience
         );
-        total_amount += amount_for(perf);
     }
 
     result += &format!("Amount owed is {amount}\n", amount = usd(total_amount));
     result += &format!("You earned {credits} credits", credits = total_volume_credits());
 
+    result
+}
+
+fn get_total_amount() -> i32 {
+    let invoices = read_invoices_from_file("../invoices.json").unwrap();
+    let invoice = invoices.into_iter().next().unwrap();
+    let mut result: i32 = 0;
+    for perf in invoice.performances.iter() {
+        result += amount_for(perf);
+    }
     result
 }
 
