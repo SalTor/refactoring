@@ -8,12 +8,11 @@ use serde::{Deserialize, Serialize};
 
 fn main() {
     let invoices = read_invoices_from_file("../invoices.json").unwrap();
-    let plays = read_plays_from_file("../plays.json").unwrap();
 
-    println!("{}", statement(invoices.into_iter().next().unwrap(), plays));
+    println!("{}", statement(invoices.into_iter().next().unwrap()));
 }
 
-fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
+fn statement(invoice: Invoice) -> String {
     let mut total_amount = 0;
     let mut volume_credits = 0;
     let mut result = format!(
@@ -22,16 +21,16 @@ fn statement(invoice: Invoice, plays: HashMap<String, Play>) -> String {
     );
 
     for perf in invoice.performances.iter() {
-        let this_amount = amount_for(perf, play_for(perf, plays.clone()));
+        let this_amount = amount_for(perf);
 
         volume_credits += i32::from(cmp::max(perf.audience - 30, 0));
-        if play_for(perf, plays.clone()).r#type.as_str() == "comedy" {
+        if play_for(perf).r#type.as_str() == "comedy" {
             volume_credits += i32::from(perf.audience / 5);
         }
 
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
-            play_name = play_for(perf, plays.clone()).name,
+            play_name = play_for(perf).name,
             amount = usd(this_amount),
             seats = perf.audience
         );
@@ -50,11 +49,15 @@ fn usd<'a>(cents: i32) -> Money<'a, Currency> {
     result
 }
 
-fn play_for(perf: &Performance, plays: HashMap<String, Play>) -> Play {
+fn play_for(perf: &Performance) -> Play {
+    let plays = read_plays_from_file("../plays.json").unwrap();
+
     plays.get(&perf.play_id).unwrap().clone()
 }
 
-fn amount_for(perf: &Performance, play: Play) -> i32 {
+fn amount_for(perf: &Performance) -> i32 {
+    let play = play_for(perf);
+
     match play.r#type.to_owned().as_str() {
         "tragedy" => {
             let mut amount: i32 = 40000;
@@ -116,10 +119,9 @@ struct Play {
 #[test]
 fn text_statement() {
     let invoices = read_invoices_from_file("../invoices.json").unwrap();
-    let plays = read_plays_from_file("../plays.json").unwrap();
 
     assert_eq!(
-        statement(invoices.into_iter().next().unwrap(), plays),
+        statement(invoices.into_iter().next().unwrap()),
         "Statement for BigCo
     Hamlet: $650 (55 seats)
     As You Like It: $580 (35 seats)
