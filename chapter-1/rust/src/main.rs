@@ -13,24 +13,21 @@ fn main() {
 }
 
 fn statement(invoice: Invoice) -> String {
-  let statement_data = StatementData {
-    customer: invoice.customer.clone(),
-    performances: invoice.performances.clone()
-  };
+    let statement_data = StatementData {
+        customer: invoice.customer.clone(),
+        performances: invoice.performances.clone(),
+    };
 
-  render_plain_text(statement_data)
+    render_plain_text(statement_data)
 }
 
 struct StatementData {
-  customer: String,
-  performances: Vec<Performance>
+    customer: String,
+    performances: Vec<Performance>,
 }
 
 fn render_plain_text(data: StatementData) -> String {
-    let mut result = format!(
-        "Statement for {client_name}\n",
-        client_name = data.customer
-    );
+    let mut result = format!("Statement for {client_name}\n", client_name = data.customer);
 
     for perf in data.performances.iter() {
         result += &format!(
@@ -41,8 +38,14 @@ fn render_plain_text(data: StatementData) -> String {
         );
     }
 
-    result += &format!("Amount owed is {amount}\n", amount = usd(get_total_amount()));
-    result += &format!("You earned {credits} credits", credits = total_volume_credits());
+    result += &format!(
+        "Amount owed is {amount}\n",
+        amount = usd(get_total_amount())
+    );
+    result += &format!(
+        "You earned {credits} credits",
+        credits = total_volume_credits()
+    );
 
     result
 }
