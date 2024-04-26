@@ -15,7 +15,12 @@ fn main() {
 fn statement(invoice: Invoice) -> String {
     let statement_data = StatementData {
         customer: invoice.customer.clone(),
-        performances: invoice.performances.clone(),
+        performances: invoice
+            .performances
+            .clone()
+            .iter()
+            .map(|perf| enrich_performance(perf.clone()))
+            .collect(),
     };
 
     render_plain_text(statement_data)
@@ -24,6 +29,10 @@ fn statement(invoice: Invoice) -> String {
 struct StatementData {
     customer: String,
     performances: Vec<Performance>,
+}
+
+fn enrich_performance(perf: Performance) -> Performance {
+    perf
 }
 
 fn render_plain_text(data: StatementData) -> String {
