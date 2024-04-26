@@ -14,23 +14,25 @@ fn main() {
 
 fn statement(invoice: Invoice) -> String {
   let statement_data = StatementData {
-    customer: invoice.customer.clone()
+    customer: invoice.customer.clone(),
+    performances: invoice.performances.clone()
   };
 
-  render_plain_text(statement_data, invoice)
+  render_plain_text(statement_data)
 }
 
 struct StatementData {
-  customer: String
+  customer: String,
+  performances: Vec<Performance>
 }
 
-fn render_plain_text(data: StatementData, invoice: Invoice) -> String {
+fn render_plain_text(data: StatementData) -> String {
     let mut result = format!(
         "Statement for {client_name}\n",
         client_name = data.customer
     );
 
-    for perf in invoice.performances.iter() {
+    for perf in data.performances.iter() {
         result += &format!(
             "    {play_name}: {amount} ({seats} seats)\n",
             play_name = play_for(perf).name,
@@ -132,7 +134,7 @@ struct Invoice {
     performances: Vec<Performance>,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 struct Performance {
     play_id: String,
     audience: i8,
